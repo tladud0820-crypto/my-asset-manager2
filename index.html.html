@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MY ASSET MANAGER</title>
+<style>
+:root{--bg:#f5f6f8;--card:#fff;--ink:#20242c;--muted:#78808d;--line:#e8ebef;--accent:#263d5a;--soft:#edf2f7;--green:#25815b;--red:#bd5555;--shadow:0 8px 28px rgba(25,38,55,.06)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,select{font:inherit}button{cursor:pointer;border:0;border-radius:10px;padding:11px 15px;font-weight:650}
+.app{max-width:1180px;margin:auto;padding:28px 22px 50px}.top{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:24px}
+.brand{font-size:12px;letter-spacing:2px;color:var(--muted);font-weight:800}.brand b{display:block;color:var(--accent);font-size:22px;letter-spacing:1px;margin-top:5px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.primary{background:var(--accent);color:white}.secondary{background:white;border:1px solid var(--line);color:var(--ink)}
+h1{font-size:27px;margin:0 0 6px}.sub{color:var(--muted);font-size:14px;margin:0 0 22px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:19px;box-shadow:var(--shadow)}
+.metric label{font-size:13px;color:var(--muted)}.metric strong{display:block;font-size:25px;letter-spacing:-.6px;margin-top:11px}.metric small{display:block;color:var(--muted);font-size:12px;margin-top:6px}
+.layout{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-top:16px}.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px}.section-head h2{font-size:16px;margin:0}.section-head span{font-size:12px;color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:13px}th{text-align:left;color:var(--muted);font-weight:600;padding:10px 8px;border-bottom:1px solid var(--line)}td{padding:13px 8px;border-bottom:1px solid var(--line)}tr:last-child td{border-bottom:0}.amount{text-align:right;font-variant-numeric:tabular-nums;font-weight:650}.tag{display:inline-block;padding:5px 8px;border-radius:7px;background:var(--soft);font-size:11px;color:var(--accent)}
+.empty{text-align:center;padding:34px 12px;color:var(--muted);font-size:13px}.barrow{margin:15px 0}.barlabel{display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px}.track{height:8px;background:#edf0f3;border-radius:99px;overflow:hidden}.fill{height:100%;background:#6f89a7;border-radius:99px}
+.tabs{display:flex;gap:6px;margin:20px 0 14px;flex-wrap:wrap}.tab{background:transparent;color:var(--muted);padding:9px 13px}.tab.active{background:var(--accent);color:white}
+.panel{display:none}.panel.active{display:block}.formgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}.field input,.field select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:white;color:var(--ink)}.field.full{grid-column:1/-1}
+.modal{display:none;position:fixed;inset:0;background:#10192377;align-items:center;justify-content:center;padding:18px;z-index:5}.modal.open{display:flex}.dialog{background:white;border-radius:18px;padding:23px;width:min(520px,100%);max-height:90vh;overflow:auto}.dialog h2{margin:0 0 18px;font-size:19px}.dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.note{font-size:12px;color:var(--muted);line-height:1.6;background:#f8f9fb;border-radius:12px;padding:13px;margin-top:15px}.danger{color:var(--red);background:none;padding:6px}.smallbtn{background:#f1f3f6;padding:7px 9px;font-size:12px}
+.goalrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}.goalrow:last-child{border:0}
+@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}.layout{grid-template-columns:1fr}.app{padding:20px 14px 40px}.metric strong{font-size:22px}}
+@media(max-width:480px){.top{align-items:flex-start;flex-direction:column}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}table{font-size:12px}.hide-mobile{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+  <div class="brand">PERSONAL FINANCE <b>MY ASSET MANAGER</b></div>
+  <div class="actions"><button class="secondary" id="exportBtn">CSV 내보내기</button><button class="primary" id="addBtn">＋ 자산 추가</button></div>
+</header>
+<h1>나의 자산 현황</h1><p class="sub">흩어진 자산을 한곳에서 기록하고, 변화와 목표를 관리하세요.</p>
+<section class="grid">
+  <div class="card metric"><label>총자산</label><strong id="total">₩0</strong><small>보유 자산 합계</small></div>
+  <div class="card metric"><label>총부채</label><strong id="debt">₩0</strong><small>등록한 부채 합계</small></div>
+  <div class="card metric"><label>순자산</label><strong id="net">₩0</strong><small>총자산 - 총부채</small></div>
+  <div class="card metric"><label>등록 항목</label><strong id="count">0개</strong><small>자산 및 부채 계정</small></div>
+</section>
+<nav class="tabs">
+  <button class="tab active" data-tab="overview">대시보드</button><button class="tab" data-tab="assets">자산 목록</button><button class="tab" data-tab="goals">목표 관리</button><button class="tab" data-tab="history">월별 기록</button>
+</nav>
+<section class="panel active" id="overview">
+ <div class="layout">
+  <div class="card"><div class="section-head"><h2>보유 자산</h2><span id="asof"></span></div><div id="assetPreview" class="empty">아직 등록된 자산이 없습니다.<br>‘자산 추가’에서 첫 항목을 등록해 보세요.</div></div>
+  <div class="card"><div class="section-head"><h2>자산 구성</h2><span>자산 유형별 비중</span></div><div id="breakdown" class="empty">자산을 등록하면 구성 비중이 표시됩니다.</div></div>
+ </div>
+ <div class="card" style="margin-top:16px"><div class="section-head"><h2>최근 월별 스냅샷</h2><button class="smallbtn" id="snapshotBtn">이번 달 기록 저장</button></div><div id="snapshotPreview" class="empty">월별 기록이 아직 없습니다.</div></div>
+</section>
+<section class="panel" id="assets"><div class="card"><div class="section-head"><h2>전체 자산 및 부채</h2><span>항목을 선택해 수정하거나 삭제할 수 있어요.</span></div><div id="assetTable" class="empty">등록된 항목이 없습니다.</div></div></section>
+<section class="panel" id="goals"><div class="card"><div class="section-head"><h2>자산 목표</h2><button class="primary" id="goalBtn">＋ 목표 추가</button></div><div id="goalList" class="empty">목표를 설정하고 달성률을 관리해 보세요.</div></div></section>
+<section class="panel" id="history"><div class="card"><div class="section-head"><h2>월별 자산 기록</h2><span>기록 시점의 총자산·부채·순자산</span></div><div id="historyTable" class="empty">저장된 월별 기록이 없습니다.</div></div></section>
+<div class="note">🔒 데이터 안내: 현재 버전은 입력한 정보를 이 브라우저의 로컬 저장소에 보관합니다. 기기나 브라우저가 바뀌면 자동으로 공유되지 않습니다. 실제 금융기관 계좌와 연결되거나 서버에 백업되는 서비스는 아니므로, 공용 PC에서는 사용하지 말고 CSV 백업을 권장합니다.</div>
+</div>
+
+<div class="modal" id="assetModal"><div class="dialog"><h2 id="assetModalTitle">자산 추가</h2>
+<form id="assetForm"><input type="hidden" id="editId"><div class="formgrid">
+ <div class="field"><label>구분</label><select id="kind"><option value="asset">자산</option><option value="debt">부채</option></select></div>
+ <div class="field"><label>자산 유형</label><select id="category"><option>현금성 자산</option><option>예금·적금</option><option>투자 자산</option><option>연금 자산</option><option>주택청약</option><option>기타 금융자산</option><option>대출</option><option>카드 미결제금</option><option>기타 부채</option></select></div>
+ <div class="field full"><label>계좌 또는 항목 이름</label><input id="name" required placeholder="예: 비상금 통장, ISA, IRP"></div>
+ <div class="field"><label>금융기관 (선택)</label><input id="institution" placeholder="예: 은행·증권사"></div>
+ <div class="field"><label>현재 잔액 (원)</label><input id="amount" type="number" min="0" step="1" required placeholder="예: 1500000"></div>
+ <div class="field full"><label>메모 (선택)</label><input id="memo" placeholder="만기일, 사용 목적 등"></div>
+</div><div class="dialog-actions"><button type="button" class="secondary" id="cancelAsset">취소</button><button class="primary" type="submit">저장하기</button></div></form></div></div>
+<div class="modal" id="goalModal"><div class="dialog"><h2>자산 목표 추가</h2><form id="goalForm"><div class="formgrid">
+ <div class="field full"><label>목표 이름</label><input id="goalName" required placeholder="예: 결혼 자금"></div>
+ <div class="field"><label>목표 금액 (원)</label><input id="goalAmount" type="number" min="1" required></div>
+ <div class="field"><label>목표 달성 예정일</label><input id="goalDate" type="date"></div>
+</div><div class="dialog-actions"><button type="button" class="secondary" id="cancelGoal">취소</button><button class="primary">목표 저장</button></div></form></div></div>
+<script>
+const KEY='myAssetManager_v1';
+let state=JSON.parse(localStorage.getItem(KEY)||'{"items":[],"goals":[],"snapshots":[]}');
+const won=n=>'₩'+Math.round(Number(n)||0).toLocaleString('ko-KR');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const save=()=>{localStorage.setItem(KEY,JSON.stringify(state));render()};
+const assets=()=>state.items.filter(x=>x.kind==='asset');
+const debts=()=>state.items.filter(x=>x.kind==='debt');
+const sum=a=>a.reduce((s,x)=>s+Number(x.amount||0),0);
+const total=()=>sum(assets()), debt=()=>sum(debts()), net=()=>total()-debt();
+function render(){
+ document.getElementById('total').textContent=won(total());document.getElementById('debt').textContent=won(debt());document.getElementById('net').textContent=won(net());document.getElementById('count').textContent=state.items.length+'개';
+ document.getElementById('asof').textContent=new Date().toLocaleDateString('ko-KR');
+ const preview=document.getElementById('assetPreview'), table=document.getElementById('assetTable');
+ if(!state.items.length){preview.className=table.className='empty';preview.innerHTML='아직 등록된 자산이 없습니다.<br>‘자산 추가’에서 첫 항목을 등록해 보세요.';table.textContent='등록된 항목이 없습니다.'}
+ else{
+  preview.className=table.className='';
+  preview.innerHTML='<table><thead><tr><th>항목</th><th>유형</th><th class="amount">잔액</th></tr></thead><tbody>'+state.items.slice(0,6).map(x=>`<tr><td><b>${esc(x.name)}</b><br><small style="color:#78808d">${esc(x.institution)}</small></td><td><span class="tag">${x.kind==='debt'?'부채':esc(x.category)}</span></td><td class="amount">${won(x.amount)}</td></tr>`).join('')+'</tbody></table>';
+  table.innerHTML='<table><thead><tr><th>항목</th><th class="hide-mobile">유형</th><th class="amount">잔액</th><th></th></tr></thead><tbody>'+state.items.map(x=>`<tr><td><b>${esc(x.name)}</b><br><small style="color:#78808d">${esc(x.institution||x.memo||'')}</small></td><td class="hide-mobile"><span class="tag">${x.kind==='debt'?'부채':esc(x.category)}</span></td><td class="amount">${won(x.amount)}</td><td><button class="smallbtn" onclick="editItem('${x.id}')">수정</button> <button class="danger" onclick="removeItem('${x.id}')">삭제</button></td></tr>`).join('')+'</tbody></table>';
+ }
+ const groups={};assets().forEach(x=>groups[x.category]=(groups[x.category]||0)+Number(x.amount));
+ const breakdown=document.getElementById('breakdown');
+ const entries=Object.entries(groups).sort((a,b)=>b[1]-a[1]);
+ breakdown.className=entries.length?'':'empty';
+ breakdown.innerHTML=entries.length?entries.map(([k,v])=>`<div class="barrow"><div class="barlabel"><span>${esc(k)}</span><b>${won(v)} · ${total()?Math.round(v/total()*100):0}%</b></div><div class="track"><div class="fill" style="width:${total()?v/total()*100:0}%"></div></div></div>`).join(''):'자산을 등록하면 구성 비중이 표시됩니다.';
+ document.getElementById('snapshotPreview').innerHTML=state.snapshots.length?`최근 기록: <b>${esc(state.snapshots.at(-1).month)}</b> · 순자산 <b>${won(state.snapshots.at(-1).net)}</b>`:'월별 기록이 아직 없습니다.';
+ document.getElementById('historyTable').innerHTML=state.snapshots.length?'<table><thead><tr><th>기록 월</th><th class="amount">총자산</th><th class="amount">총부채</th><th class="amount">순자산</th></tr></thead><tbody>'+[...state.snapshots].reverse().map(s=>`<tr><td>${esc(s.month)}</td><td class="amount">${won(s.total)}</td><td class="amount">${won(s.debt)}</td><td class="amount">${won(s.net)}</td></tr>`).join('')+'</tbody></table>':'저장된 월별 기록이 없습니다.';
+ const gl=document.getElementById('goalList');gl.className=state.goals.length?'':'empty';
+ gl.innerHTML=state.goals.length?state.goals.map(g=>{let pct=Math.min(100,total()/g.amount*100);return `<div class="goalrow"><div style="flex:1"><b>${esc(g.name)}</b><div class="track" style="margin:8px 0"><div class="fill" style="width:${pct}%"></div></div><small style="color:#78808d">${won(total())} / ${won(g.amount)} · ${Math.round(pct)}% ${g.date?'· 목표일 '+esc(g.date):''}</small></div><button class="danger" onclick="removeGoal('${g.id}')">삭제</button></div>`}).join(''):'목표를 설정하고 달성률을 관리해 보세요.';
+}
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.getElementById('addBtn').onclick=()=>{document.getElementById('assetForm').reset();document.getElementById('editId').value='';document.getElementById('assetModalTitle').textContent='자산 추가';openModal('assetModal')};
+document.getElementById('cancelAsset').onclick=()=>closeModal('assetModal');
+document.getElementById('assetForm').onsubmit=e=>{e.preventDefault();let id=document.getElementById('editId').value;let item={id:id||crypto.randomUUID(),kind:kind.value,category:category.value,name:name.value.trim(),institution:institution.value.trim(),amount:Number(amount.value),memo:memo.value.trim()};if(id)state.items=state.items.map(x=>x.id===id?item:x);else state.items.push(item);closeModal('assetModal');save()};
+window.editItem=id=>{let x=state.items.find(y=>y.id===id);if(!x)return;editId.value=x.id;kind.value=x.kind;category.value=x.category;name.value=x.name;institution.value=x.institution;amount.value=x.amount;memo.value=x.memo;assetModalTitle.textContent='항목 수정';openModal('assetModal')};
+window.removeItem=id=>{if(confirm('이 항목을 삭제할까요?')){state.items=state.items.filter(x=>x.id!==id);save()}};
+document.getElementById('goalBtn').onclick=()=>openModal('goalModal');document.getElementById('cancelGoal').onclick=()=>closeModal('goalModal');
+document.getElementById('goalForm').onsubmit=e=>{e.preventDefault();state.goals.push({id:crypto.randomUUID(),name:goalName.value.trim(),amount:Number(goalAmount.value),date:goalDate.value});closeModal('goalModal');e.target.reset();save()};
+window.removeGoal=id=>{state.goals=state.goals.filter(g=>g.id!==id);save()};
+document.getElementById('snapshotBtn').onclick=()=>{let month=new Date().toISOString().slice(0,7);let snap={month,total:total(),debt:debt(),net:net()};let idx=state.snapshots.findIndex(x=>x.month===month);if(idx>=0){if(!confirm(month+' 기록을 현재 금액으로 갱신할까요?'))return;state.snapshots[idx]=snap}else state.snapshots.push(snap);state.snapshots.sort((a,b)=>a.month.localeCompare(b.month));save()};
+document.getElementById('exportBtn').onclick=()=>{let rows=[['구분','유형','항목명','금융기관','잔액','메모'],...state.items.map(x=>[x.kind==='debt'?'부채':'자산',x.category,x.name,x.institution,x.amount,x.memo])];let csv='\uFEFF'+rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='my-assets.csv';a.click();URL.revokeObjectURL(a.href)};
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.tab))});
+render();
+</script>
+</body></html>
